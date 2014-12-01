@@ -121,7 +121,8 @@
                 int stride = imageFrame.Width * imageFrame.BytesPerPixel;
 
 
-                this.VideoControl.Source = BitmapSource.Create(imageFrame.Width, imageFrame.Height, 96, 96, PixelFormats.Rgb24, null, this.pixelData, stride);
+                this.VideoControl.Source = BitmapSource.Create(imageFrame.Width, imageFrame.Height, 96, 96, PixelFormats.Default, null, this.pixelData, stride);
+
             }
         }
 

@@ -37,7 +37,7 @@ namespace KinectCam
 
 
 
-        public EjercicioMacarena()
+        public void EjercicioMacarena()
         {
             this.centerHip = new ptMov();
             this.hipRight = new ptMov();
@@ -50,7 +50,6 @@ namespace KinectCam
             this.handRight = new ptMov();
             this.handLeft = new ptMov();
             this.head = new ptMov();
-            listaPosturas.Add(posturas.Nada);
         }
 
         public int CompruebaMovimiento(Skeleton skeleton)
@@ -119,7 +118,7 @@ namespace KinectCam
             List<ptMov> mov = new List<ptMov>();
 
             //Comprobar si la lista esta vacia, entonces se comienza desde la posicion estatica
-            if (listaMovimientos.Count == 0)
+            if (listaMovimientos.Count > 0)
             {
                 //Comprobar que se encuentra en la posicion inicial. (Cuerpo recto y manos pegadas al cuerpo)
                 if (Math.Abs(head.X - shoulderCenter.X) <= 0.05f && Math.Abs(shoulderCenter.X - centerHip.X) <= 0.05f)
@@ -141,7 +140,6 @@ namespace KinectCam
 
                 //Comprobamos si se ha levantado por completo
                 if (Math.Abs(handLeft.Y - elbowLeft.Y) <= 0.05f && Math.Abs(elbowLeft.Y - shoulderLeft.Y) <= 0.05f)
-                //if(comparaAngulos(angle,90))
                 {
                     //Cuando se levante por completo se añade a la lista de posturas y se vacia la lista de movimientos.
                     listaPosturas.Add(posturas.BrazoIzqArriba);
@@ -150,8 +148,6 @@ namespace KinectCam
                 //Comparamos el movimiento anterior con el actual y vemos si ha levantado el brazo izquierdo.
                 else if (Math.Abs(handLeft.Y - handLeftAux.Y - 0.05f) > 0 && Math.Abs(elbowLeft.Y - elbowLeftAux.Y - 0.05f) > 0)
                 {
-                    Console.WriteLine(listaMovimientos.Count);
-
                     mov.Add(handLeft);
                     mov.Add(elbowLeft);
                     listaMovimientos.Add(mov);
@@ -168,7 +164,7 @@ namespace KinectCam
             List<ptMov> mov = new List<ptMov>();
 
             //Comprobar si la lista esta vacia, entonces se comienza desde la posicion inicial.
-            if (listaMovimientos.Count == 0)
+            if (listaMovimientos.Count > 0)
             {
                 //Comprobar que se encuentra en la posicion inicial. (Cuerpo recto,brazo izquierdo levantado y mano derecha pegada al cuerpo)
                 if (Math.Abs(head.X - shoulderCenter.X) <= 0.05f && Math.Abs(shoulderCenter.X - centerHip.X) <= 0.05f)
@@ -215,7 +211,7 @@ namespace KinectCam
             List<ptMov> mov = new List<ptMov>();
 
             //Comprobar si la lista esta vacia, entonces se comienza desde la posicion inicial.
-            if (listaMovimientos.Count == 0)
+            if (listaMovimientos.Count > 0)
             {
                 //Comprobar que se encuentra en la posicion inicial. (Cuerpo recto,brazos levantados)
                 if (Math.Abs(head.X - shoulderCenter.X) <= 0.05f && Math.Abs(shoulderCenter.X - centerHip.X) <= 0.05f)
@@ -262,7 +258,7 @@ namespace KinectCam
             List<ptMov> mov = new List<ptMov>();
 
             //Comprobar si la lista esta vacia, entonces se comienza desde la posicion inicial.
-            if (listaMovimientos.Count == 0)
+            if (listaMovimientos.Count > 0)
             {
                 //Comprobar que se encuentra en la posicion inicial. (Cuerpo recto,brazo derecho levantado y mano izquierda en codo derecho)
                 if (Math.Abs(head.X - shoulderCenter.X) <= 0.05f && Math.Abs(shoulderCenter.X - centerHip.X) <= 0.05f)
@@ -309,7 +305,7 @@ namespace KinectCam
             List<ptMov> mov = new List<ptMov>();
 
             //Comprobar si la lista esta vacia, entonces se comienza desde la posicion inicial.
-            if (listaMovimientos.Count == 0)
+            if (listaMovimientos.Count > 0)
             {
                 //Comprobar que se encuentra en la posicion inicial. (Cuerpo recto,mano izquierda-codo derecho y mano derecha-codo izquierdo)
                 if (Math.Abs(head.X - shoulderCenter.X) <= 0.05f && Math.Abs(shoulderCenter.X - centerHip.X) <= 0.05f)
@@ -353,7 +349,7 @@ namespace KinectCam
             List<ptMov> mov = new List<ptMov>();
 
             //Comprobar si la lista esta vacia, entonces se comienza desde la posicion inicial.
-            if (listaMovimientos.Count == 0)
+            if (listaMovimientos.Count > 0)
             {
                 //Comprobar que se encuentra en la posicion inicial. (Cuerpo recto,mano izquierda en cabeza)
                 if (Math.Abs(head.X - shoulderCenter.X) <= 0.05f && Math.Abs(shoulderCenter.X - centerHip.X) <= 0.05f)
@@ -396,7 +392,7 @@ namespace KinectCam
             List<ptMov> mov = new List<ptMov>();
 
             //Comprobar si la lista esta vacia, entonces se comienza desde la posicion inicial.
-            if (listaMovimientos.Count == 0)
+            if (listaMovimientos.Count > 0)
             {
                 //Comprobar que se encuentra en la posicion inicial. (Cuerpo recto,manos en la cabeza)
                 if (Math.Abs(head.X - shoulderCenter.X) <= 0.05f && Math.Abs(shoulderCenter.X - centerHip.X) <= 0.05f)
@@ -441,7 +437,7 @@ namespace KinectCam
             List<ptMov> mov = new List<ptMov>();
 
             //Comprobar si la lista esta vacia, entonces se comienza desde la posicion inicial.
-            if (listaMovimientos.Count == 0)
+            if (listaMovimientos.Count > 0)
             {
                 //Comprobar que se encuentra en la posicion inicial. 
                 //(Cuerpo recto,mano izquierda en cadera derecha y mano izquierda en cabeza)
