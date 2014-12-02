@@ -46,6 +46,9 @@
             
             <Grid Grid.Row="2" Background="#F7F7F7"  Grid.Column="1" Grid.ColumnSpan="2"  Width="640" Height="480" VerticalAlignment="Center"  HorizontalAlignment="Left" >
                 <Image Name="VideoControl" Height="Auto" Margin="0" />
+                <Canvas Name="SkeletonControl" Height="Auto" Margin="0">
+                    
+                </Canvas>
             </Grid>
             <StackPanel Background="#F7F7F7" Grid.Row="4" Grid.ColumnSpan="2" Orientation="Horizontal" Height="83" Margin="0,77,0,-100">
                 <Grid >
@@ -58,78 +61,12 @@
                     <Button Content="Parar" Grid.Column="1" IsEnabled="{Binding CanStop}" Margin="10" FontSize="20" Click="ButtonStop_Click" />
                     <Button Content="Salir" Grid.Column="0"  Margin="10" FontSize="20"   Click="ButtonExit_Click" />
                 </Grid>
-                <Popup Margin="0,0" Placement="Top" PlacementTarget="{Binding ElementName=tglIcon}"  PopupAnimation="Fade"
-                           IsOpen="{Binding ElementName=tglIcon, Path=IsChecked}"
-                            >
-                    <Border Background="White"   >
-                        <Grid Width="600" >
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="70" MinHeight="20" />
-                                <RowDefinition Height="30" MinHeight="30"/>
-                                <RowDefinition Height="30" MinHeight="30"/>
-                                <RowDefinition Height="30" MinHeight="30"/>
-                                <RowDefinition Height="30" MinHeight="30"/>
-                                <RowDefinition Height="30" MinHeight="30"/>
-                                <RowDefinition Height="30" MinHeight="30"/>
-                                <RowDefinition Height="30" MinHeight="30"/>
-                                <RowDefinition Height="30" MinHeight="30"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="223*"  />
-                                <ColumnDefinition Width="377*"  />
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Background="#F7F7F7" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Orientation="Horizontal">
-                                <Image Source="/Settings.png" Width="32" Height="32" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5" />
-                                <Label Foreground="#007ACC" FontSize="30" FontFamily="Segoe UI SemiBold" Content="KinectCam Settings" HorizontalAlignment="Left"  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"  VerticalAlignment="Center"  Margin="5,0"  />
-                            </StackPanel>
-                            <TextBlock Text="Video Format" Grid.Row="1" Grid.Column="0"  FontSize="20"/>
-                            <ComboBox  Name="ColorImageFormatSelection" Width="300" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Margin="5,0,0,0"  FontSize="20" ItemsSource="{Binding ColorImageFormats}" SelectionChanged="ComboBox_SelectionChanged"  />
-
-                            <TextBlock Text="Effects" FontSize="20"
-                       Grid.Row="2" 
-                       Grid.Column="0" />
-
-
-
-                            <ComboBox  Name="EffectsCombo" Width="100" Grid.Row="2" Grid.Column="1"  HorizontalAlignment="Left" Margin="5,0,0,0"  FontSize="20" ItemsSource="{Binding ColorEffects}" SelectionChanged="EffectsCombo_SelectionChanged"  />
-
-
-                            <TextBlock Text="Invert Color" Grid.Row="3" Grid.Column="0" FontSize="20" />
-                            <CheckBox Name="InvertColorCheckBox" IsChecked="{Binding IsInvertColorEffectsEnabled}" Unchecked="InvertColorCheckBox_Checked" Checked="InvertColorCheckBox_Checked"  Margin="5,8" Grid.Column="1" Grid.Row="3" VerticalAlignment="Center" Height="14" />
-
-                            <TextBlock Text="Display Frame Rate" Grid.Row="4" Grid.Column="0" FontSize="20" />
-                            <CheckBox  Name="FrameRateCheckBox"  Checked="ManageFrameRateDisplay" Unchecked="ManageFrameRateDisplay" Grid.Row="4" Grid.Column="1"
-                      VerticalAlignment="Center" 
-                      HorizontalAlignment="Left"
-                      Height="14" Width="16" Margin="5,8,0,8" />
-
-                            <TextBlock Text="Display Frame Number " Grid.Row="5" Grid.Column="0" FontSize="20"/>
-                            <CheckBox Name="FrameNumberCheckBox" Checked="ManagedFrameNumberDisplay" Unchecked="ManagedFrameNumberDisplay" Grid.Row="5" Grid.Column="1" 
-                      VerticalAlignment="Center" HorizontalAlignment="Left" 
-                      Height="14" Width="16" Margin="5,8,0,8" />
-
-                            <TextBlock Text="Auto Frame Capture" Grid.Row="6" Grid.Column="0" FontSize="20"/>
-                            <StackPanel Grid.Row="6" Grid.Column="1"  Orientation="Horizontal">
-                                <CheckBox IsChecked="{Binding IsAutoCapturedEnabled}" Name="AutoFrameCapture"
-                      VerticalAlignment="Center" HorizontalAlignment="Left" Checked="CheckBox_Checked_1"
-                      Height="14" Width="16" Margin="5,8" />
-                            </StackPanel>
-
-                            <TextBlock Text="Sensor Angle" Grid.Row="7" Grid.Column="0" FontSize="20"/>
-                            <Slider TickPlacement="BottomRight"  Width="350" Maximum="27" Minimum="-27" VerticalAlignment="Center" IsSnapToTickEnabled="True" SmallChange="5" LargeChange="5" HorizontalAlignment="Left" Grid.Row="7" Grid.Column="1" Margin="5,3,0,3" ValueChanged="Slider_ValueChanged" Height="24"  />
-                            <TextBlock Text="Gray Scale" Grid.Row="8" Grid.Column="0" FontSize="20"/>
-                            <CheckBox IsChecked="{Binding IsGrayScaleEnabled}" Name="GrayScaleCheckBox" Checked="GrayScaleChecked" Unchecked="GrayScaleChecked" Grid.Row="8" Grid.Column="1"
-                      VerticalAlignment="Center" HorizontalAlignment="Left" 
-                  Height="14" Width="16" Margin="5,8,0,8" />
-                        </Grid>
-                    </Border>
-                </Popup>
-            </StackPanel>
+               </StackPanel>
             <Border BorderBrush="Silver" BorderThickness="1" Grid.Row="2" Height="100" HorizontalAlignment="Left" Margin="10,13,0,0" Name="borPos1" VerticalAlignment="Top" Width="110">
                 <Image Height="90" Name="imgPos1" Stretch="Fill" Width="100" Source="/KinectCam;component/imgs/1.png" />
             </Border>
             <Border BorderBrush="Silver" BorderThickness="1" Height="100" HorizontalAlignment="Left" Margin="130,13,0,0" Name="borPos2" VerticalAlignment="Top" Width="110" Grid.Row="2">
-                <Image Height="90" Name="imgPos2" Stretch="Fill" Width="100" ImageFailed="imgPos2_ImageFailed" Source="/KinectCam;component/imgs/2.png" />
+                <Image Height="90" Name="imgPos2" Stretch="Fill" Width="100" Source="/KinectCam;component/imgs/2.png" />
             </Border>
             <Border BorderBrush="Silver" BorderThickness="1" Height="100" HorizontalAlignment="Left" Margin="10,136,0,0" Name="borPos3" VerticalAlignment="Top" Width="110" Grid.Row="2">
                 <Image Height="90" Name="imgPos3" Stretch="Fill" Width="100" Source="/KinectCam;component/imgs/3.png" />

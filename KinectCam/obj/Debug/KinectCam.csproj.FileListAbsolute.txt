@@ -60,3 +60,19 @@ D:\universidad\5 grado\Nuevos paradigmas de interaccion\Practica 2\KinectCam\obj
 D:\universidad\5 grado\Nuevos paradigmas de interaccion\Practica 2\KinectCam\obj\Debug\GeneratedInternalTypeHelper.g.cs
 D:\universidad\5 grado\Nuevos paradigmas de interaccion\Practica 2\KinectCam\obj\Debug\KinectCam_MarkupCompile.cache
 D:\universidad\5 grado\Nuevos paradigmas de interaccion\Practica 2\KinectCam\obj\Debug\KinectCam_MarkupCompile.lref
+C:\Users\washavi\Desktop\KinectCam\bin\Debug\KinectCam.exe.config
+C:\Users\washavi\Desktop\KinectCam\obj\Debug\KinectCam.exe
+C:\Users\washavi\Desktop\KinectCam\obj\Debug\KinectCam.pdb
+C:\Users\washavi\Desktop\KinectCam\obj\Debug\KinectCam.csprojResolveAssemblyReference.cache
+C:\Users\washavi\Desktop\KinectCam\obj\Debug\MainWindow.g.cs
+C:\Users\washavi\Desktop\KinectCam\obj\Debug\App.g.cs
+C:\Users\washavi\Desktop\KinectCam\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\washavi\Desktop\KinectCam\obj\Debug\KinectCam_MarkupCompile.cache
+C:\Users\washavi\Desktop\KinectCam\obj\Debug\KinectCam_MarkupCompile.lref
+C:\Users\Washavi\Desktop\KinectCam\bin\Debug\KinectCam.exe
+C:\Users\Washavi\Desktop\KinectCam\bin\Debug\KinectCam.pdb
+C:\Users\Washavi\Desktop\KinectCam\obj\Debug\KinectCam_Content.g.cs
+C:\Users\Washavi\Desktop\KinectCam\obj\Debug\MainWindow.baml
+C:\Users\Washavi\Desktop\KinectCam\obj\Debug\KinectCam.g.resources
+C:\Users\Washavi\Desktop\KinectCam\obj\Debug\KinectCam.Properties.Resources.resources
+C:\Users\Washavi\Desktop\KinectCam\obj\Debug\KinectCam.csproj.GenerateResource.Cache

@@ -70,7 +70,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ColorImageWrapper.cs" />
     <Compile Include="Converter\VisibilityConverter.cs" />
     <Compile Include="EjercicioMacarena.cs" />
     <Compile Include="MainWindow.xaml.cs">
@@ -126,6 +125,10 @@
     <Resource Include="imgs\6.png" />
     <Resource Include="imgs\7.png" />
     <Resource Include="imgs\8.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="song\Los Del Rio La Macarena Version Original Espaol %28mp3cut.net%29.mp3" />
+    <Content Include="song\Los Del Rio La Macarena Version Original Espaol %28mp3cut.net%29.wav" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

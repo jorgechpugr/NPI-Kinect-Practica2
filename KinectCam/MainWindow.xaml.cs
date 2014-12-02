@@ -11,6 +11,7 @@
     using KinectStatusNotifier;
     using Microsoft.Kinect;
     using System.Linq;
+    using System.Windows.Shapes;
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -32,12 +33,6 @@
         private MainWindowViewModel viewModel;
 
         /// <summary>
-        /// Color Image Wrapper
-        /// </summary>
-        private ColorImageWrapper imageFramevalue;
-
-
-        /// <summary>
         /// Gets or sets the pixel data.
         /// </summary>
         /// <value>The pixel data.</value>
@@ -56,32 +51,9 @@
             this.DataContext = this.viewModel;
             this.Loaded += this.MainWindow_Loaded;
             this.ejercicio = new EjercicioMacarena();
+            this.viewModel.CanStart = true;
         }
 
-
-        /// <summary>
-        /// Gets or sets the image frame.
-        /// </summary>
-        /// <value>
-        /// The image frame.
-        /// </value>
-        private ColorImageWrapper ImageFrame
-        {
-            get
-            {
-                return this.imageFramevalue;
-            }
-
-            set
-            {
-                if (this.imageFramevalue != null && this.imageFramevalue.NeedDispose)
-                {
-                    this.imageFramevalue.Dispose();
-                }
-
-                this.imageFramevalue = value;
-            }
-        }
 
 
         /// <summary>
@@ -102,27 +74,24 @@
         /// <param name="e">The <see cref="ColorImageFrameReadyEventArgs" /> instance containing the event data.</param>
         protected void sensor_ColorFrameReady(object sender, ColorImageFrameReadyEventArgs e)
         {
-            ColorImageFrame imageFrame = e.OpenColorImageFrame();
-
-            // Check if the incoming frame is not null
-            if (imageFrame == null)
+            using (ColorImageFrame imageFrame = e.OpenColorImageFrame())
             {
-                return;
-            }
-            else
-            {
-                // Get the pixel data in byte array
-                this.pixelData = new byte[imageFrame.PixelDataLength];
+                // Check if the incoming frame is not null
+                if (imageFrame == null)
+                {
+                    return;
+                }
+                else
+                {
+                    // Get the pixel data in byte array
+                    this.pixelData = new byte[imageFrame.PixelDataLength];
 
-                // Copy the pixel data
-                imageFrame.CopyPixelDataTo(this.pixelData);
+                    // Copy the pixel data
+                    imageFrame.CopyPixelDataTo(this.pixelData);
 
-                // Calculate the stride
-                int stride = imageFrame.Width * imageFrame.BytesPerPixel;
+                    this.VideoControl.Source = BitmapSource.Create(imageFrame.Width, imageFrame.Height, 96, 96, PixelFormats.Bgr32, null, this.pixelData, imageFrame.Width * 4);
 
-
-                this.VideoControl.Source = BitmapSource.Create(imageFrame.Width, imageFrame.Height, 96, 96, PixelFormats.Default, null, this.pixelData, stride);
-
+                }
             }
         }
 
@@ -135,8 +104,8 @@
             {
                 this.sensor = KinectSensor.KinectSensors.FirstOrDefault(sensorItem => sensorItem.Status == KinectStatus.Connected);
                 this.statusNotifier.Sensors = KinectSensor.KinectSensors;
-                this.StartSensor();
-                this.sensor.ColorStream.Enable(ColorImageFormat.RgbResolution640x480Fps30);
+                //this.StartSensor();
+                this.sensor.ColorStream.Enable();
                 this.sensor.ColorFrameReady += this.sensor_ColorFrameReady;
 
                 // Turn on the skeleton stream to receive skeleton frames
@@ -169,17 +138,10 @@
                     skeletons = new Skeleton[skeletonFrame.SkeletonArrayLength];
                     skeletonFrame.CopySkeletonDataTo(skeletons);
 
+                    Skeleton skel = skeletons.FirstOrDefault();
 
-                }
-            }
 
-            int pos = 0;
-
-            if (skeletons.Length != 0)
-            {
-                foreach (Skeleton skel in skeletons)
-                {
-                    pos = ejercicio.CompruebaMovimiento(skel);
+                    int pos = ejercicio.CompruebaMovimiento(skel);
 
                     if (pos == 0)
                     {
@@ -223,9 +185,14 @@
                     }
 
 
+
                 }
             }
+
+
+
         }
+      
 
         /// <summary>
         /// Handles the Click event of the ButtonStart control.
@@ -235,6 +202,8 @@
         private void ButtonStart_Click(object sender, RoutedEventArgs e)
         {
             this.StartSensor();
+            /*System.Media.SoundPlayer sp = new System.Media.SoundPlayer("/KinectCam;component/song/Los Del Rio La Macarena Version Original Espaol (mp3cut.net).wav");
+            sp.Play();*/
         }
 
         /// <summary>
@@ -244,6 +213,7 @@
         /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
         private void ButtonStop_Click(object sender, RoutedEventArgs e)
         {
+            this.ejercicio.Reset();
             this.StopSensor();
         }
 
