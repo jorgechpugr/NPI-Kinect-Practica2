@@ -31,17 +31,18 @@ namespace KinectCam
 
         List<posturas> listaPosturas = new List<posturas>();
         List<List<ptMov>> listaMovimientos = new List<List<ptMov>>();
+        List<ptMov> Inicial = new List<ptMov>();
 
-        ptMov centerHip, hipRight, hipleft, shoulderRight, shoulderLeft, shoulderCenter, elbowRight, elbowLeft,
+        ptMov centerHip, hipRight, hipLeft, shoulderRight, shoulderLeft, shoulderCenter, elbowRight, elbowLeft,
             handRight, handLeft, head;
 
 
 
         public EjercicioMacarena()
         {
-            /*this.centerHip = new ptMov();
+            this.centerHip = new ptMov();
             this.hipRight = new ptMov();
-            this.hipleft = new ptMov();
+            this.hipLeft = new ptMov();
             this.shoulderRight = new ptMov();
             this.shoulderLeft = new ptMov();
             this.shoulderCenter = new ptMov();
@@ -49,14 +50,20 @@ namespace KinectCam
             this.elbowLeft = new ptMov();
             this.handRight = new ptMov();
             this.handLeft = new ptMov();
-            this.head = new ptMov();*/
+            this.head = new ptMov();
             listaPosturas.Add(posturas.Nada);
         }
 
         private bool CompruebaPosIni(Skeleton skeleton)
         {
             damePuntos(skeleton);
-            if (Math.Abs(head.X - shoulderCenter.X) <= 0.05f && Math.Abs(shoulderCenter.X - centerHip.X) <= 0.05f)
+            ptMov headAux = Inicial[0];
+            ptMov shoulderCenterAux = Inicial[1];
+            ptMov CenterHipAux = Inicial[2];
+
+            if (Math.Abs(headAux.X - head.X) <= 0.05f && Math.Abs(headAux.Y - head.Y) <= 0.05f && Math.Abs(headAux.Z - head.Z) <= 0.05f
+                && Math.Abs(shoulderCenterAux.X - shoulderCenter.X) <= 0.05f && Math.Abs(shoulderCenterAux.Y - shoulderCenter.Y) <= 0.05f && Math.Abs(shoulderCenterAux.Z - shoulderCenter.Z) <= 0.05f
+                && Math.Abs(CenterHipAux.X - centerHip.X) <= 0.05f && Math.Abs(CenterHipAux.Y - centerHip.Y) <= 0.05f && Math.Abs(CenterHipAux.Z - centerHip.Z) <= 0.05f)
             {
                 return true;
             }
@@ -64,59 +71,83 @@ namespace KinectCam
             return false;
         }
 
+        private bool GuardaPosturaInicial(Skeleton skeleton)
+        {
+            damePuntos(skeleton);
+            if (Math.Abs(head.X - shoulderCenter.X) <= 0.05f && Math.Abs(shoulderCenter.X - centerHip.X) <= 0.05f
+                && Math.Abs(handLeft.Z - handRight.Z) <= 0.05f && Math.Abs(handLeft.Y - handRight.Y) <= 0.05f)
+            {
+                Inicial.Add(head);
+                Inicial.Add(shoulderCenter);
+                Inicial.Add(centerHip);
+                Inicial.Add(shoulderLeft);
+                Inicial.Add(elbowLeft);
+                Inicial.Add(handLeft);
+                Inicial.Add(hipLeft);
+                Inicial.Add(shoulderRight);
+                Inicial.Add(elbowRight);
+                Inicial.Add(handRight);
+                Inicial.Add(hipRight);
+
+                return true;
+            }
+            return false;       
+        }
+
+        public float getXinicial(int pos) { return Inicial[pos].X; }
+        public float getYinicial(int pos) { return Inicial[pos].Y; }
+        public float getZinicial(int pos) { return Inicial[pos].Z; }
+
         public int CompruebaMovimiento(Skeleton skeleton)
         {
             posturas postura = DimeUltimaPostura();
-            bool posIni = CompruebaPosIni(skeleton);
-
-            if (!posIni)
-            {
-                return -1;
-            }
 
             if (postura == posturas.Nada)
             {
-                LevantaBrazoIzquierdo(skeleton);
-                return 0;
+                if (GuardaPosturaInicial(skeleton))
+                {
+                    listaPosturas.Add(posturas.BrazoIzqArriba);
+                    return 1; 
+                }
             }
             else if (postura == posturas.BrazoIzqArriba)
             {
                 LevantaBrazoDerecho(skeleton);
-                return 1;
+                return 2;                
             }
             else if (postura == posturas.BrazoDerArriba)
             {
                 ManoIzquierdaCodoDerecho(skeleton);
-                return 2;
+                return 3;                
             }
             else if (postura == posturas.ManoIzqCodoDer)
             {
                 ManoDerechaCodoIzquierdo(skeleton);
-                return 3;
+                return 4;               
             }
             else if (postura == posturas.ManoDerCodoIzq)
             {
                 BrazoIzquierdoCabeza(skeleton);
-                return 4;
+                return 5;               
             }
             else if (postura == posturas.BrazoIzqCabeza)
             {
                 BrazoDerechoCabeza(skeleton);
-                return 5;
+                return 6;               
             }
             else if (postura == posturas.BrazoDerCabeza)
             {
                 BrazoIzquierdoCaderaDerecha(skeleton);
-                return 6;
+                return 7;                
             }
             else if (postura == posturas.BrazoIzqCadDer)
             {
                 BrazoDerechoCaderaIzquierda(skeleton);
-                return 7;
+                return 8;
             }
             else if (postura == posturas.BrazoDerCadIzq)
             {
-                return 8;
+                return 9;
             }
 
             return -1;
@@ -144,43 +175,43 @@ namespace KinectCam
             //Comprobar si la lista esta vacia, entonces se comienza desde la posicion estatica
             if (listaMovimientos.Count == 0)
             {
-                if (skeleton.Joints[JointType.Head].TrackingState == JointTrackingState.Tracked &&
-                    skeleton.Joints[JointType.ShoulderCenter].TrackingState == JointTrackingState.Tracked && 
-                    skeleton.Joints[JointType.HipCenter].TrackingState == JointTrackingState.Tracked)
-                {
-                    //Comprobar que se encuentra en la posicion inicial. (Cuerpo recto y manos pegadas al cuerpo)
-                    if (Math.Abs(head.X - shoulderCenter.X) <= 0.05f && Math.Abs(shoulderCenter.X - centerHip.X) <= 0.05f)
-                    {
-                        if (Math.Abs(handLeft.Z - handRight.Z) <= 0.05f && Math.Abs(handLeft.Y - handRight.Y) <= 0.05f)
-                        {
-                            mov.Add(handLeft);
-                            mov.Add(elbowLeft);
-                            listaMovimientos.Add(mov);
-                        }
-                    }
-                }
+
+                //Comprobar que se encuentra en la posicion inicial. (Cuerpo recto y manos pegadas al cuerpo)
+                //if (CompruebaPosIni(skeleton))
+                //{
+                   // if (Math.Abs(handLeft.Z - handRight.Z) <= 0.05f && Math.Abs(handLeft.Y - handRight.Y) <= 0.05f)
+                    //{
+                        mov.Add(handLeft);
+                        mov.Add(elbowLeft);
+                        listaMovimientos.Add(mov);
+                    //}
+                //}
+
             }
             else
             {
                 //Obtenemos el ultimo elemto de la lista
-                mov = listaMovimientos[listaMovimientos.Count - 1];
+                /*mov = listaMovimientos[listaMovimientos.Count - 1];
                 ptMov handLeftAux = mov[0];
                 ptMov elbowLeftAux = mov[1];
-
+                ptMov shoulderLeftIni= Inicial[3];
+                */
                 //Comprobamos si se ha levantado por completo
-                if (Math.Abs(handLeft.Y - elbowLeft.Y) <= 0.05f) //&& Math.Abs(elbowLeft.Y - shoulderLeft.Y) <= 0.05f)
+                //if (Math.Abs(shoulderLeftIni.Y - handLeft.Y) <= 0.05f)
+                //if (Math.Abs(handLeft.Y - elbowLeft.Y) <= 0.05f && Math.Abs(elbowLeft.Y - shoulderLeft.Y) <= 0.05f)
+                if (handLeft.Y > shoulderLeft.Y)
                 {
                     //Cuando se levante por completo se añade a la lista de posturas y se vacia la lista de movimientos.
                     listaPosturas.Add(posturas.BrazoIzqArriba);
                     listaMovimientos.Clear();
                 }
                 //Comparamos el movimiento anterior con el actual y vemos si ha levantado el brazo izquierdo.
-                else if (Math.Abs(handLeft.Y - handLeftAux.Y - 0.05f) > 0 && Math.Abs(elbowLeft.Y - elbowLeftAux.Y - 0.05f) > 0)
+              /*  else if (Math.Abs(handLeft.Y - handLeftAux.Y - 0.05f) > 0 && Math.Abs(elbowLeft.Y - elbowLeftAux.Y - 0.05f) > 0)
                 {
                     mov.Add(handLeft);
                     mov.Add(elbowLeft);
                     listaMovimientos.Add(mov);
-                }
+                }*/
                 //Si el movimiento no es correcto no se añade a la lista y puede volver a la posicion anterior
             }
         }
@@ -195,22 +226,18 @@ namespace KinectCam
             //Comprobar si la lista esta vacia, entonces se comienza desde la posicion inicial.
             if (listaMovimientos.Count == 0)
             {
-                if (skeleton.Joints[JointType.Head].TrackingState == JointTrackingState.Tracked &&
-                    skeleton.Joints[JointType.ShoulderCenter].TrackingState == JointTrackingState.Tracked &&
-                    skeleton.Joints[JointType.HipCenter].TrackingState == JointTrackingState.Tracked)
-                {
-                    //Comprobar que se encuentra en la posicion inicial. (Cuerpo recto,brazo izquierdo levantado y mano derecha pegada al cuerpo)
-                    if (Math.Abs(head.X - shoulderCenter.X) <= 0.05f && Math.Abs(shoulderCenter.X - centerHip.X) <= 0.05f)
-                    {
-                        if (Math.Abs(handLeft.Y - elbowLeft.Y) <= 0.05f && Math.Abs(elbowLeft.Y - shoulderLeft.Y) <= 0.05f
-                            && Math.Abs(handRight.X - elbowRight.X) <= 0.05f && Math.Abs(elbowRight.X - shoulderRight.X) <= 0.05f)
-                        {
-                            mov.Add(handRight);
-                            mov.Add(elbowRight);
-                            listaMovimientos.Add(mov);
-                        }
-                    }
-                }
+                //Comprobar que se encuentra en la posicion inicial. (Cuerpo recto,brazo izquierdo levantado y mano derecha pegada al cuerpo)
+                //if (CompruebaPosIni(skeleton))
+                //{
+                 //   if (Math.Abs(handLeft.Y - elbowLeft.Y) <= 0.05f && Math.Abs(elbowLeft.Y - shoulderLeft.Y) <= 0.05f
+                   //     && Math.Abs(handRight.X - elbowRight.X) <= 0.05f && Math.Abs(elbowRight.X - shoulderRight.X) <= 0.05f)
+                    //{
+                        mov.Add(handRight);
+                        mov.Add(elbowRight);
+                        listaMovimientos.Add(mov);
+                    //}
+                //}
+
             }
             else
             {
@@ -220,7 +247,8 @@ namespace KinectCam
                 ptMov elbowRightAux = mov[1];
 
                 //Comprobamos si se ha levantado por completo
-                if (Math.Abs(handRight.Y - elbowRight.Y) <= 0.05f && Math.Abs(elbowRight.Y - shoulderRight.Y) <= 0.05f)
+                //if (Math.Abs(handRight.Y - elbowRight.Y) <= 0.05f && Math.Abs(elbowRight.Y - shoulderRight.Y) <= 0.05f)
+                if (handRight.Y > shoulderRight.Y && elbowRight.Y > shoulderLeft.Y)
                 {
                     //Cuando se levante por completo se añade a la lista de posturas y se vacia la lista de movimientos.
                     listaPosturas.Add(posturas.BrazoDerArriba);
@@ -247,22 +275,19 @@ namespace KinectCam
             //Comprobar si la lista esta vacia, entonces se comienza desde la posicion inicial.
             if (listaMovimientos.Count == 0)
             {
-                if (skeleton.Joints[JointType.Head].TrackingState == JointTrackingState.Tracked &&
-                    skeleton.Joints[JointType.ShoulderCenter].TrackingState == JointTrackingState.Tracked &&
-                    skeleton.Joints[JointType.HipCenter].TrackingState == JointTrackingState.Tracked)
-                {
-                    //Comprobar que se encuentra en la posicion inicial. (Cuerpo recto,brazos levantados)
-                    if (Math.Abs(head.X - shoulderCenter.X) <= 0.05f && Math.Abs(shoulderCenter.X - centerHip.X) <= 0.05f)
-                    {
-                        if (Math.Abs(handLeft.Y - elbowLeft.Y) <= 0.05f && Math.Abs(elbowLeft.Y - shoulderLeft.Y) <= 0.05f
-                            && Math.Abs(handRight.Y - elbowRight.Y) <= 0.05f && Math.Abs(elbowRight.Y - shoulderRight.Y) <= 0.05f)
-                        {
-                            mov.Add(elbowRight);
-                            mov.Add(handLeft);
-                            listaMovimientos.Add(mov);
-                        }
-                    }
-                }
+
+                //Comprobar que se encuentra en la posicion inicial. (Cuerpo recto,brazos levantados)
+                //if (Math.Abs(head.X - shoulderCenter.X) <= 0.05f && Math.Abs(shoulderCenter.X - centerHip.X) <= 0.05f)
+                //{
+                  //  if (Math.Abs(handLeft.Y - elbowLeft.Y) <= 0.05f && Math.Abs(elbowLeft.Y - shoulderLeft.Y) <= 0.05f
+                    //    && Math.Abs(handRight.Y - elbowRight.Y) <= 0.05f && Math.Abs(elbowRight.Y - shoulderRight.Y) <= 0.05f)
+                    //{
+                        mov.Add(elbowRight);
+                        mov.Add(handLeft);
+                        listaMovimientos.Add(mov);
+                    //}
+
+                //}
             }
             else
             {
@@ -299,22 +324,19 @@ namespace KinectCam
             //Comprobar si la lista esta vacia, entonces se comienza desde la posicion inicial.
             if (listaMovimientos.Count == 0)
             {
-                if (skeleton.Joints[JointType.Head].TrackingState == JointTrackingState.Tracked &&
-                    skeleton.Joints[JointType.ShoulderCenter].TrackingState == JointTrackingState.Tracked &&
-                    skeleton.Joints[JointType.HipCenter].TrackingState == JointTrackingState.Tracked)
-                {
-                    //Comprobar que se encuentra en la posicion inicial. (Cuerpo recto,brazo derecho levantado y mano izquierda en codo derecho)
-                    if (Math.Abs(head.X - shoulderCenter.X) <= 0.05f && Math.Abs(shoulderCenter.X - centerHip.X) <= 0.05f)
-                    {
-                        if (Math.Abs(handLeft.Y - elbowRight.Y) <= 0.05f && Math.Abs(handLeft.X - elbowRight.X) <= 0.05f
-                            && Math.Abs(handRight.Y - elbowRight.Y) <= 0.05f && Math.Abs(elbowRight.Y - shoulderRight.Y) <= 0.05f)
-                        {
-                            mov.Add(elbowLeft);
-                            mov.Add(handRight);
-                            listaMovimientos.Add(mov);
-                        }
-                    }
-                }
+
+                //Comprobar que se encuentra en la posicion inicial. (Cuerpo recto,brazo derecho levantado y mano izquierda en codo derecho)
+               // if (CompruebaPosIni(skeleton))
+                //{
+                  //  if (Math.Abs(handLeft.Y - elbowRight.Y) <= 0.05f && Math.Abs(handLeft.X - elbowRight.X) <= 0.05f
+                    //    && Math.Abs(handRight.Y - elbowRight.Y) <= 0.05f && Math.Abs(elbowRight.Y - shoulderRight.Y) <= 0.05f)
+                    //{
+                        mov.Add(elbowLeft);
+                        mov.Add(handRight);
+                        listaMovimientos.Add(mov);
+                    //}
+
+                //}
             }
             else
             {
@@ -351,21 +373,18 @@ namespace KinectCam
             //Comprobar si la lista esta vacia, entonces se comienza desde la posicion inicial.
             if (listaMovimientos.Count == 0)
             {
-                if (skeleton.Joints[JointType.Head].TrackingState == JointTrackingState.Tracked &&
-                    skeleton.Joints[JointType.ShoulderCenter].TrackingState == JointTrackingState.Tracked &&
-                    skeleton.Joints[JointType.HipCenter].TrackingState == JointTrackingState.Tracked)
-                {
-                    //Comprobar que se encuentra en la posicion inicial. (Cuerpo recto,mano izquierda-codo derecho y mano derecha-codo izquierdo)
-                    if (Math.Abs(head.X - shoulderCenter.X) <= 0.05f && Math.Abs(shoulderCenter.X - centerHip.X) <= 0.05f)
-                    {
-                        if (Math.Abs(handLeft.Y - elbowRight.Y) <= 0.05f && Math.Abs(handLeft.X - elbowRight.X) <= 0.05f
-                            && Math.Abs(handRight.Y - handLeft.Y) <= 0.05f && Math.Abs(handRight.Y - handLeft.Y) <= 0.05f)
-                        {
-                            mov.Add(handLeft);
-                            listaMovimientos.Add(mov);
-                        }
-                    }
-                }
+
+                //Comprobar que se encuentra en la posicion inicial. (Cuerpo recto,mano izquierda-codo derecho y mano derecha-codo izquierdo)
+                //if (CompruebaPosIni(skeleton))
+                //{
+                  //  if (Math.Abs(handLeft.Y - elbowRight.Y) <= 0.05f && Math.Abs(handLeft.X - elbowRight.X) <= 0.05f
+                    //    && Math.Abs(handRight.Y - handLeft.Y) <= 0.05f && Math.Abs(handRight.Y - handLeft.Y) <= 0.05f)
+                    //{
+                        mov.Add(handLeft);
+                        listaMovimientos.Add(mov);
+                    //}
+
+                //}
             }
             else
             {
@@ -374,7 +393,7 @@ namespace KinectCam
                 ptMov handLeftAux = mov[0];
 
                 //Comprobamos si se ha colocado la mano izquierda en la cabeza.
-                if (Math.Abs(handLeft.Y - head.Y) <= 0.05f && Math.Abs(handLeft.X - head.X) <= 0.05f && Math.Abs(handLeft.Z - head.Z) <= 0.05f)
+                if (handLeft.Y < head.Y && handLeft.Z < head.Z)
                 {
                     //Cuando se levante por completo se añade a la lista de posturas y se vacia la lista de movimientos.
                     listaPosturas.Add(posturas.BrazoIzqCabeza);
@@ -400,20 +419,17 @@ namespace KinectCam
             //Comprobar si la lista esta vacia, entonces se comienza desde la posicion inicial.
             if (listaMovimientos.Count == 0)
             {
-                if (skeleton.Joints[JointType.Head].TrackingState == JointTrackingState.Tracked &&
-                    skeleton.Joints[JointType.ShoulderCenter].TrackingState == JointTrackingState.Tracked &&
-                    skeleton.Joints[JointType.HipCenter].TrackingState == JointTrackingState.Tracked)
-                {
-                    //Comprobar que se encuentra en la posicion inicial. (Cuerpo recto,mano izquierda en cabeza)
-                    if (Math.Abs(head.X - shoulderCenter.X) <= 0.05f && Math.Abs(shoulderCenter.X - centerHip.X) <= 0.05f)
-                    {
-                        if (Math.Abs(handLeft.Y - head.Y) <= 0.05f && Math.Abs(handLeft.X - head.X) <= 0.05f)
-                        {
-                            mov.Add(handRight);
-                            listaMovimientos.Add(mov);
-                        }
-                    }
-                }
+
+                //Comprobar que se encuentra en la posicion inicial. (Cuerpo recto,mano izquierda en cabeza)
+                //if (CompruebaPosIni(skeleton))
+                //{
+                  //  if (Math.Abs(handLeft.Y - head.Y) <= 0.05f && Math.Abs(handLeft.X - head.X) <= 0.05f)
+                   // {
+                        mov.Add(handRight);
+                        listaMovimientos.Add(mov);
+                    //}
+
+                //}
             }
             else
             {
@@ -422,7 +438,7 @@ namespace KinectCam
                 ptMov handRightAux = mov[0];
 
                 //Comprobamos si se ha colocado la mano derecha en la cabeza.
-                if (Math.Abs(handRight.Y - head.Y) <= 0.05f && Math.Abs(handRight.X - head.X) <= 0.05f && Math.Abs(handRight.Z - head.Z) <= 0.05f)
+                if (handRight.Y < head.Y && handRight.Z < head.Z)
                 {
                     //Cuando se levante por completo se añade a la lista de posturas y se vacia la lista de movimientos.
                     listaPosturas.Add(posturas.BrazoDerCabeza);
@@ -448,21 +464,18 @@ namespace KinectCam
             //Comprobar si la lista esta vacia, entonces se comienza desde la posicion inicial.
             if (listaMovimientos.Count == 0)
             {
-                if (skeleton.Joints[JointType.Head].TrackingState == JointTrackingState.Tracked &&
-                    skeleton.Joints[JointType.ShoulderCenter].TrackingState == JointTrackingState.Tracked &&
-                    skeleton.Joints[JointType.HipCenter].TrackingState == JointTrackingState.Tracked)
-                {
-                    //Comprobar que se encuentra en la posicion inicial. (Cuerpo recto,manos en la cabeza)
-                    if (Math.Abs(head.X - shoulderCenter.X) <= 0.05f && Math.Abs(shoulderCenter.X - centerHip.X) <= 0.05f)
-                    {
-                        if ((Math.Abs(handLeft.Y - head.Y) <= 0.05f && Math.Abs(handLeft.X - head.X) <= 0.05f)
-                            && (Math.Abs(handRight.Y - head.Y) <= 0.05f && Math.Abs(handRight.X - head.X) <= 0.05f))
-                        {
-                            mov.Add(handLeft);
-                            listaMovimientos.Add(mov);
-                        }
-                    }
-                }
+
+                //Comprobar que se encuentra en la posicion inicial. (Cuerpo recto,manos en la cabeza)
+                //if (Math.Abs(head.X - shoulderCenter.X) <= 0.05f && Math.Abs(shoulderCenter.X - centerHip.X) <= 0.05f)
+                //{
+                  //  if ((Math.Abs(handLeft.Y - head.Y) <= 0.05f && Math.Abs(handLeft.X - head.X) <= 0.05f)
+                    //    && (Math.Abs(handRight.Y - head.Y) <= 0.05f && Math.Abs(handRight.X - head.X) <= 0.05f))
+                    //{
+                        mov.Add(handLeft);
+                        listaMovimientos.Add(mov);
+                    //}
+
+                //}
             }
             else
             {
@@ -471,8 +484,7 @@ namespace KinectCam
                 ptMov handLeftAux = mov[0];
 
                 //Comprobamos si se ha colocado la mano izquierda en la cadera derecha.
-                if (Math.Abs(handLeft.Y - hipRight.Y) <= 0.05f && Math.Abs(handLeft.X - hipRight.X) <= 0.05f
-                    && Math.Abs(handLeft.Z - hipRight.Z) <= 0.05f)
+                if (handLeft.Y < hipRight.Y)
                 {
                     //Cuando se levante por completo se añade a la lista de posturas y se vacia la lista de movimientos.
                     listaPosturas.Add(posturas.BrazoIzqCadDer);
@@ -498,22 +510,19 @@ namespace KinectCam
             //Comprobar si la lista esta vacia, entonces se comienza desde la posicion inicial.
             if (listaMovimientos.Count == 0)
             {
-                if (skeleton.Joints[JointType.Head].TrackingState == JointTrackingState.Tracked &&
-                    skeleton.Joints[JointType.ShoulderCenter].TrackingState == JointTrackingState.Tracked &&
-                    skeleton.Joints[JointType.HipCenter].TrackingState == JointTrackingState.Tracked)
-                {
-                    //Comprobar que se encuentra en la posicion inicial. 
-                    //(Cuerpo recto,mano izquierda en cadera derecha y mano izquierda en cabeza)
-                    if (Math.Abs(head.X - shoulderCenter.X) <= 0.05f && Math.Abs(shoulderCenter.X - centerHip.X) <= 0.05f)
-                    {
-                        if ((Math.Abs(handLeft.Y - hipRight.Y) <= 0.05f && Math.Abs(handLeft.X - hipRight.X) <= 0.05f)
-                            && (Math.Abs(handRight.Y - head.Y) <= 0.05f && Math.Abs(handRight.X - head.X) <= 0.05f))
-                        {
-                            mov.Add(handRight);
-                            listaMovimientos.Add(mov);
-                        }
-                    }
-                }
+
+                //Comprobar que se encuentra en la posicion inicial. 
+                //(Cuerpo recto,mano izquierda en cadera derecha y mano izquierda en cabeza)
+                //if (CompruebaPosIni(skeleton))
+                //{
+                  //  if ((Math.Abs(handLeft.Y - hipRight.Y) <= 0.05f && Math.Abs(handLeft.X - hipRight.X) <= 0.05f)
+                       // && (Math.Abs(handRight.Y - head.Y) <= 0.05f && Math.Abs(handRight.X - head.X) <= 0.05f))
+                  //  {
+                        mov.Add(handRight);
+                        listaMovimientos.Add(mov);
+                   // }
+
+                //}
             }
             else
             {
@@ -522,8 +531,7 @@ namespace KinectCam
                 ptMov handRightAux = mov[0];
 
                 //Comprobamos si se ha colocado la mano derecha en la cadera izquierda.
-                if (Math.Abs(handRight.Y - hipleft.Y) <= 0.05f && Math.Abs(handRight.X - hipleft.X) <= 0.05f
-                    && Math.Abs(handRight.Z - hipleft.Z) <= 0.05f)
+                if (handRight.Y < hipLeft.Y)
                 {
                     //Cuando se levante por completo se añade a la lista de posturas y se vacia la lista de movimientos.
                     listaPosturas.Add(posturas.BrazoDerCadIzq);
@@ -538,7 +546,7 @@ namespace KinectCam
                 //Si el movimiento no es correcto no se añade a la lista y puede volver a la posicion anterior
             }
         }
-      
+
         //Obtengo las coordenadas de los puntos.
         private void damePuntos(Skeleton skel)
         {
@@ -560,11 +568,11 @@ namespace KinectCam
             }
             if (skel.Joints[JointType.HipLeft].TrackingState == JointTrackingState.Tracked)
             {
-                this.hipleft = new ptMov();
+                this.hipLeft = new ptMov();
                 //Obtengos puntos de la cadera izquierda.
-                hipleft.X = skel.Joints[JointType.HipLeft].Position.X;
-                hipleft.Y = skel.Joints[JointType.HipLeft].Position.Y;
-                hipleft.Z = skel.Joints[JointType.HipLeft].Position.Z;
+                hipLeft.X = skel.Joints[JointType.HipLeft].Position.X;
+                hipLeft.Y = skel.Joints[JointType.HipLeft].Position.Y;
+                hipLeft.Z = skel.Joints[JointType.HipLeft].Position.Z;
             }
             if (skel.Joints[JointType.ShoulderRight].TrackingState == JointTrackingState.Tracked)
             {

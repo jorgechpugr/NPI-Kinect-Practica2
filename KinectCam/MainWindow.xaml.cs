@@ -41,6 +41,7 @@
 
         private EjercicioMacarena ejercicio;
 
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindow" /> class.
         /// </summary>
@@ -121,7 +122,7 @@
             }
         }
 
-
+        
         /// <summary>
         /// Event handler for Kinect sensor's SkeletonFrameReady event
         /// </summary>
@@ -138,62 +139,229 @@
                     skeletons = new Skeleton[skeletonFrame.SkeletonArrayLength];
                     skeletonFrame.CopySkeletonDataTo(skeletons);
 
-                    Skeleton skel = skeletons.FirstOrDefault();
+                    Skeleton skel = new Skeleton();
 
-
-                    int pos = ejercicio.CompruebaMovimiento(skel);
-
-                    if (pos == 0)
+                    if (skeletons.Length != 0)
                     {
-                        this.borPos1.Background = Brushes.Red;
-                    }
-                    else if (pos == 1)
-                    {
-                        this.borPos1.Background = Brushes.Green;
-                    }
-                    else if (pos == 2)
-                    {
-                        this.borPos2.Background = Brushes.Green;
-                    }
-                    else if (pos == 3)
-                    {
-                        this.borPos3.Background = Brushes.Green;
-                    }
-                    else if (pos == 4)
-                    {
-                        this.borPos4.Background = Brushes.Green;
-                    }
-                    else if (pos == 5)
-                    {
-                        this.borPos5.Background = Brushes.Green;
-                    }
-                    else if (pos == 6)
-                    {
-                        this.borPos6.Background = Brushes.Green;
-                    }
-                    else if (pos == 7)
-                    {
-                        this.borPos7.Background = Brushes.Green;
-                    }
-                    else if (pos == 8)
-                    {
-                        this.borPos8.Background = Brushes.Green;
-                    }
-                    else if (pos == -1)
-                    {
-                        this.borPos1.Background = Brushes.Red;
+                        foreach (Skeleton skele in skeletons)
+                        {
+                            if (skele.TrackingState == SkeletonTrackingState.Tracked)
+                            {
+                                skel = skele;
+                            }
+                        }
                     }
 
+                    if (skel.TrackingState == SkeletonTrackingState.Tracked)
+                    {
+                        int pos = ejercicio.CompruebaMovimiento(skel);
 
+                        if (pos == 0)
+                        {
+                          
 
+                            //this.Joints(skel);
+                            
+                        }
+                        else if (pos == 1)
+                        {
+                            this.borPos1.Background = Brushes.Green;
+                            //Brush color = Brushes.Red;
+                            //this.Joints(skel, color);
+                        }
+                        else if (pos == 2)
+                        {
+                            this.borPos1.Background = Brushes.Purple;
+                            this.borPos2.Background = Brushes.Green;
+                        }
+                        else if (pos == 3)
+                        {
+                            this.borPos2.Background = Brushes.Purple;
+                            this.borPos3.Background = Brushes.Green;
+                        }
+                        else if (pos == 4)
+                        {
+                            this.borPos3.Background = Brushes.Purple;
+                            this.borPos4.Background = Brushes.Green;
+                        }
+                        else if (pos == 5)
+                        {
+                            this.borPos4.Background = Brushes.Purple;
+                            this.borPos5.Background = Brushes.Green;
+                        }
+                        else if (pos == 6)
+                        {
+                            this.borPos5.Background = Brushes.Purple;
+                            this.borPos6.Background = Brushes.Green;
+                        }
+                        else if (pos == 7)
+                        {
+                            this.borPos6.Background = Brushes.Purple;
+                            this.borPos7.Background = Brushes.Green;
+                        }
+                        else if (pos == 8)
+                        {
+                            this.borPos7.Background = Brushes.Purple;
+                            this.borPos8.Background = Brushes.Green;
+                        }
+                        if (pos == 9)
+                        {
+                            this.borPos1.Background = Brushes.Purple;
+                            this.borPos2.Background = Brushes.Purple;
+                            this.borPos3.Background = Brushes.Purple;
+                            this.borPos4.Background = Brushes.Purple;
+                            this.borPos5.Background = Brushes.Purple;
+                            this.borPos6.Background = Brushes.Purple;
+                            this.borPos7.Background = Brushes.Purple;
+                            this.borPos8.Background = Brushes.Purple;
+                        }
+                        else if (pos == -1)
+                        {
+                            this.borPos1.Background = Brushes.Red;
+                            this.borPos2.Background = Brushes.Red;
+                            this.borPos3.Background = Brushes.Red;
+                            this.borPos4.Background = Brushes.Red;
+                            this.borPos5.Background = Brushes.Red;
+                            this.borPos6.Background = Brushes.Red;
+                            this.borPos7.Background = Brushes.Red;
+                            this.borPos8.Background = Brushes.Red;
+                        }
+                    }
+                }
+            }
+        }
+
+        /*
+
+        private void SensorSkeletonFrameReady(object sender, SkeletonFrameReadyEventArgs e)
+        {
+            Skeleton[] skeletons = new Skeleton[0];
+
+            using (SkeletonFrame skeletonFrame = e.OpenSkeletonFrame())
+            {
+                if (skeletonFrame != null)
+                {
+                    skeletons = new Skeleton[skeletonFrame.SkeletonArrayLength];
+                    skeletonFrame.CopySkeletonDataTo(skeletons);
                 }
             }
 
+            
+            if (skeletons.Length != 0)
+            {
+                foreach (Skeleton skel in skeletons)
+                {
+                    //RenderClippedEdges(skel, dc);
 
+                    if (skel.TrackingState == SkeletonTrackingState.Tracked)
+                    {
+                        this.Joints(skel);
+                    }
+                }
+            }
 
         }
-      
+        */
+        private void DibujaElipse(float x, float y, float z)
+        {
+            SkeletonPoint point = new SkeletonPoint();
+            point.X = x;
+            point.Y = y;
+            point.Z = z;
 
+            Point ell = this.SkeletonPointToScreen(point);
+            Ellipse aux = new Ellipse();
+            aux.Width = 20;
+            aux.Height = 20;
+            aux.Fill = Brushes.Orange;
+            Canvas.SetTop(aux, ell.Y);
+            Canvas.SetLeft(aux, ell.X);
+            this.SkeletonControl.Children.Add(aux);
+        }
+
+        private void DibujaElipse(Joint joint)
+        {
+            Point ell = this.SkeletonPointToScreen(joint.Position);
+            Ellipse aux = new Ellipse();
+            aux.Width = 20;
+            aux.Height = 20;
+            aux.Fill = Brushes.Orange;
+            Canvas.SetTop(aux, ell.Y);
+            Canvas.SetLeft(aux, ell.X);
+            this.SkeletonControl.Children.Add(aux);
+        }
+
+        private void DibujaElipse(Joint joint, Brush color)
+        {
+            Point ell = this.SkeletonPointToScreen(joint.Position);
+            Ellipse aux = new Ellipse();
+            aux.Width = 20;
+            aux.Height = 20;
+            aux.Fill = color;
+            Canvas.SetTop(aux, ell.Y);
+            Canvas.SetLeft(aux, ell.X);
+            this.SkeletonControl.Children.Add(aux);
+        }
+
+
+        private Point SkeletonPointToScreen(SkeletonPoint skelpoint)
+        {
+            // Convert point to depth space.  
+            // We are not using depth directly, but we do want the points in our 640x480 output resolution.
+            DepthImagePoint depthPoint = this.sensor.CoordinateMapper.MapSkeletonPointToDepthPoint(skelpoint, DepthImageFormat.Resolution640x480Fps30);
+            return new Point(depthPoint.X, depthPoint.Y);
+        }
+        
+        private void Joints(Skeleton skeleton)
+        {
+            if (this.SkeletonControl.Children.Count > 20)
+                this.SkeletonControl.Children.Clear();
+            // Render Joints
+            foreach (Joint joint in skeleton.Joints)
+            {
+                Brush drawBrush = null;
+
+                if (joint.TrackingState == JointTrackingState.Tracked)
+                {
+                    drawBrush = Brushes.Orange;
+                }
+                else if (joint.TrackingState == JointTrackingState.Inferred)
+                {
+                    drawBrush = Brushes.Purple;
+                }
+
+                if (drawBrush != null)
+                {
+                    DibujaElipse(joint);
+                }
+            }
+        }
+
+        private void Joints(Skeleton skeleton, Brush color)
+        {
+            if (this.SkeletonControl.Children.Count > 20)
+                this.SkeletonControl.Children.Clear();
+            // Render Joints
+            foreach (Joint joint in skeleton.Joints)
+            {
+                Brush drawBrush = null;
+
+                if (joint.TrackingState == JointTrackingState.Tracked)
+                {
+                    drawBrush = Brushes.Orange;
+                }
+                else if (joint.TrackingState == JointTrackingState.Inferred)
+                {
+                    drawBrush = Brushes.Purple;
+                }
+
+                if (drawBrush != null)
+                {
+                    DibujaElipse(joint,color);
+                }
+            }
+        }
+        
         /// <summary>
         /// Handles the Click event of the ButtonStart control.
         /// </summary>
@@ -202,6 +370,14 @@
         private void ButtonStart_Click(object sender, RoutedEventArgs e)
         {
             this.StartSensor();
+            this.borPos1.Background = Brushes.Red;
+            this.borPos2.Background = Brushes.Red;
+            this.borPos3.Background = Brushes.Red;
+            this.borPos4.Background = Brushes.Red;
+            this.borPos5.Background = Brushes.Red;
+            this.borPos6.Background = Brushes.Red;
+            this.borPos7.Background = Brushes.Red;
+            this.borPos8.Background = Brushes.Red;
             /*System.Media.SoundPlayer sp = new System.Media.SoundPlayer("/KinectCam;component/song/Los Del Rio La Macarena Version Original Espaol (mp3cut.net).wav");
             sp.Play();*/
         }

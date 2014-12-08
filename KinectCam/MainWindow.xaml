@@ -46,9 +46,9 @@
             
             <Grid Grid.Row="2" Background="#F7F7F7"  Grid.Column="1" Grid.ColumnSpan="2"  Width="640" Height="480" VerticalAlignment="Center"  HorizontalAlignment="Left" >
                 <Image Name="VideoControl" Height="Auto" Margin="0" />
-                <Canvas Name="SkeletonControl" Height="Auto" Margin="0">
+                <Canvas Name="SkeletonControl" Height="480" Width="640" Margin="0"/>
                     
-                </Canvas>
+                
             </Grid>
             <StackPanel Background="#F7F7F7" Grid.Row="4" Grid.ColumnSpan="2" Orientation="Horizontal" Height="83" Margin="0,77,0,-100">
                 <Grid >
